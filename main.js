@@ -3,26 +3,42 @@ var Equation = function()
 	console.log("contructor");
 }
 
-Equation.create = function(num1, num2, currentOp)
+Equation.create = function()
 {
 	console.log("create");
-	while(true)
+	//tested on my nephew so I made division easier for his small child brain
+	if(currentOp == "/")
 	{
-		if(currentOp == "/")
+		while(Equation.division(num1, num2) == false)
 		{
-			if(Equation.division(num1, num2)){break;}
+			if(num1 > num2)
+			{
+				num2 += 1;
+			}
 			else
 			{
-				this.currentOp = "x";
-				break;
+				num1 += 1;
 			}
 		}
-		else {break;}
 	}
-	let question = num1 + " " + currentOp + " " + num2 + " = [?]";
+
+	question = num1 + " " + currentOp + " " + num2 + " = [?]";
 	questionEle.textContent = question;
 }
-
+const skipEle = document.querySelector(".skip");
+skipEle.onclick = function()
+{
+	if(skipsAllowed === 0)
+	{
+		//NO MOAR SKIPPIN'
+	}
+	else
+	{
+		skipsAllowed -= 1;
+		skipEle.value = "Skip(" + skipsAllowed + ")";
+		Equation.setup();
+	}
+}
 const submitEle = document.querySelector(".submit");
 submitEle.onclick = function()
 {
@@ -39,7 +55,7 @@ submitEle.onclick = function()
 		case "/":
 			answer = num1 / num2;
 			break;
-		case "*":
+		case "x":
 			answer = Equation.multiplication(num1, num2);
 			break;
 	}
@@ -80,14 +96,25 @@ Equation.correct = function()
 {
 	console.log("correct");
 	guessEle.value = "";
-	Equation.call();
+	score += 1;
+	if(skipsAllowed < 3)
+	{
+		skipsAllowed += 1;
+		skipEle.value = "Skip(" + skipsAllowed + ")";
+	}
+	else
+	{
+		//NOT ADDIN' MORE SKIPS
+	}
+	scoreEle.textContent = score;
 	Equation.setup();	
 }
 Equation.incorrect = function()
 {
 	console.log("incorrect");
 	guessEle.value = "";
-	Equation.call();
+	score -= 1;
+	scoreEle.textContent = score;
 	Equation.setup();
 }
 Equation.addition = function(num1, num2)
@@ -114,12 +141,26 @@ Equation.multiplication = function(num1, num2)
 {
 	return num1 * num2;
 }
+Equation.setLocal = function()
+{
+	localStorage.setItem('Question', JSON.stringify(question));	
+	localStorage.setItem('Score', JSON.stringify(score));
+}
+Equation.loadLocal = function()
+{
+	score = localStorage.getItem('Question');
+	question = localStorage.getItem('Score');
+}
 const scoreEle = document.querySelector(".score");
 const guessEle = document.querySelector(".guess");
 const questionEle = document.querySelector(".question");
 const operator = ["+", "-", "/", "x"];
+var currentGame
+var score = 0;
 var currentOp;
 var num1;
 var num2;
+var question;
+var skipsAllowed = 3;
 Equation.call();
 Equation.setup();
