@@ -1,13 +1,37 @@
 var Equation = function()
 {
-	console.log("contructor");
+	//BIG 'OL LIST-A VARIABIBBLES
+	const skipEle = document.querySelector(".skip");
+	const submitEle = document.querySelector(".submit");
+	const scoreEle = document.querySelector(".score");
+	const guessEle = document.querySelector(".guess");
+	const questionEle = document.querySelector(".question");
+	const operator = ['+', '-', '/', 'x'];
+	var currentGame
+	var score = 0;
+	var currentOp;
+	var num1;
+	var num2;
+	var question;
+	var skipsAllowed = 3;
+	
+	//Check for Local Storage
+	if(localStorage.getItem('num1'))
+	{
+		Equation.loadLocal();
+		Equation.create();
+	}
+	else
+	{
+		Equation.setup();
+	}
 }
 
 Equation.create = function()
 {
 	console.log("create");
 	//tested on my nephew so I made division easier for his small child brain
-	if(currentOp == "/")
+	if(currentOp == operator[2])
 	{
 		while(Equation.division(num1, num2) == false)
 		{
@@ -21,11 +45,10 @@ Equation.create = function()
 			}
 		}
 	}
-
 	question = num1 + " " + currentOp + " " + num2 + " = [?]";
 	questionEle.textContent = question;
 }
-const skipEle = document.querySelector(".skip");
+
 skipEle.onclick = function()
 {
 	if(skipsAllowed === 0)
@@ -39,7 +62,7 @@ skipEle.onclick = function()
 		Equation.setup();
 	}
 }
-const submitEle = document.querySelector(".submit");
+
 submitEle.onclick = function()
 {
 	let guess = Number(guessEle.value);
@@ -78,19 +101,14 @@ Equation.setup = function()
 	num1 = Equation.ReRoll(13);
 	num2 = Equation.ReRoll(13);
 	currentOp = operator[Equation.ReRoll(4)];
-	Equation.create(num1,num2,currentOp);
+	Equation.setLocal();
+	Equation.create();
 }
 
+//STOLEN! From Assignment #1 (don't sue)
 Equation.ReRoll = function(max){
 	return Math.floor(Math.random() * Math.floor(max));
 }
-
-//var answer;
-//var num1 = Equation.ReRoll(13);
-//var num2 = Equation.ReRoll(13);
-//var operator = ["+", "-", "÷", "×"];
-
-
 
 Equation.correct = function()
 {
@@ -143,24 +161,22 @@ Equation.multiplication = function(num1, num2)
 }
 Equation.setLocal = function()
 {
-	localStorage.setItem('Question', JSON.stringify(question));	
-	localStorage.setItem('Score', JSON.stringify(score));
+	localStorage.setItem('num1', num1);
+	localStorage.setItem('num2', num2);
+	localStorage.setItem('currentOp', currentOp);
+	localStorage.setItem('Score', score);
+	localStorage.setItem('skipsAllowed', skipsAllowed);
 }
 Equation.loadLocal = function()
 {
-	score = localStorage.getItem('Question');
-	question = localStorage.getItem('Score');
+	console.log("local loaded");
+	score = Number(localStorage.getItem('Score'));
+	num1 = Number(localStorage.getItem('num1'));
+	num2 = Number(localStorage.getItem('num2'));
+	currentOp = localStorage.getItem('currentOp');
+	skipsAllowed = Number(localStorage.getItem('skipsAllowed'));
+	skipEle.value = "Skip(" + skipsAllowed + ")";
+	scoreEle.textContent = score;
 }
-const scoreEle = document.querySelector(".score");
-const guessEle = document.querySelector(".guess");
-const questionEle = document.querySelector(".question");
-const operator = ["+", "-", "/", "x"];
-var currentGame
-var score = 0;
-var currentOp;
-var num1;
-var num2;
-var question;
-var skipsAllowed = 3;
+
 Equation.call();
-Equation.setup();
