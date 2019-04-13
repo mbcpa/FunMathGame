@@ -1,39 +1,99 @@
+//BIG 'OL LIST-A VARIABIBBLES
+const skipEle = document.querySelector(".skip");
+const submitEle = document.querySelector(".submit");
+const scoreEle = document.querySelector(".score");
+const guessEle = document.querySelector(".guess");
+const questionEle = document.querySelector(".question");
+const resetEle = document.querySelector(".reset");
+const operator = ['+', '-', '/', 'x'];
+var currentGame
+var score = 0;
+var currentOp;
+var num1;
+var num2;
+var question;
+var skipsAllowed = 3;
+
 var Equation = function()
-{
-	//BIG 'OL LIST-A VARIABIBBLES
-	const skipEle = document.querySelector(".skip");
-	const submitEle = document.querySelector(".submit");
-	const scoreEle = document.querySelector(".score");
-	const guessEle = document.querySelector(".guess");
-	const questionEle = document.querySelector(".question");
-	const operator = ['+', '-', '/', 'x'];
-	var currentGame
-	var score = 0;
-	var currentOp;
-	var num1;
-	var num2;
-	var question;
-	var skipsAllowed = 3;
-	
+{	
 	//Check for Local Storage
 	if(localStorage.getItem('num1'))
 	{
-		Equation.loadLocal();
-		Equation.create();
+		Equation.prototype.loadLocal();
+		Equation.prototype.create();
 	}
-	else
+	else //if not local, populates random numbaz and operator
 	{
-		Equation.setup();
+		Equation.prototype.setup();
+	}
+
+	//onclick event to skip
+	skipEle.onclick = function()
+	{
+		if(skipsAllowed === 0)
+		{
+			//NO MOAR SKIPPIN'
+		}
+		else
+		{
+			skipsAllowed -= 1;
+			skipEle.value = "Skip(" + skipsAllowed + ")";
+			Equation.prototype.setup();
+		}
+	}
+
+	//onclick event to submit answer
+	submitEle.onclick = function()
+	{
+		let guess = Number(guessEle.value);
+		let answer;
+		switch(currentOp)
+		{
+			case "+":
+				answer = Equation.prototype.addition(num1,num2);
+				break;
+			case "-":
+				answer = Equation.prototype.subtraction(num1, num2);
+				break;
+			case "/":
+				answer = num1 / num2;
+				break;
+			case "x":
+				answer = Equation.prototype.multiplication(num1, num2);
+				break;
+		}
+		if(answer == guess)
+		{
+			Equation.prototype.correct();
+		}
+		else
+		{
+			Equation.prototype.incorrect();
+		}
+	}
+
+	//onclick event to confirm w/ the user to reset
+	resetEle.onclick = function()
+	{
+		let conf = confirm("Are you sure you want to reset EVERYTHING?");
+		if(conf == true)
+		{
+			Equation.prototype.reset();
+		}
+		else
+		{
+			//dindu nuffin
+		}
 	}
 }
 
-Equation.create = function()
+//Create Method (POPULATES QUESTION ELEMENT)
+Equation.prototype.create = function()
 {
-	console.log("create");
 	//tested on my nephew so I made division easier for his small child brain
 	if(currentOp == operator[2])
 	{
-		while(Equation.division(num1, num2) == false)
+		while(Equation.prototype.division(num1, num2) == false)
 		{
 			if(num1 > num2)
 			{
@@ -49,70 +109,24 @@ Equation.create = function()
 	questionEle.textContent = question;
 }
 
-skipEle.onclick = function()
+//Setup Method (QUESTION VARIABLES + LOCALSTORAGE)
+Equation.prototype.setup = function()
 {
-	if(skipsAllowed === 0)
-	{
-		//NO MOAR SKIPPIN'
-	}
-	else
-	{
-		skipsAllowed -= 1;
-		skipEle.value = "Skip(" + skipsAllowed + ")";
-		Equation.setup();
-	}
-}
-
-submitEle.onclick = function()
-{
-	let guess = Number(guessEle.value);
-	let answer;
-	switch(currentOp)
-	{
-		case "+":
-			answer = Equation.addition(num1,num2);
-			break;
-		case "-":
-			answer = Equation.subtraction(num1, num2);
-			break;
-		case "/":
-			answer = num1 / num2;
-			break;
-		case "x":
-			answer = Equation.multiplication(num1, num2);
-			break;
-	}
-	if(answer == guess)
-	{
-		console.log(guess + "   " + answer);
-		Equation.correct();
-	}
-	else
-	{
-		console.log(guess + "   " + answer);
-		Equation.incorrect();
-	}
-}
-
-
-Equation.setup = function()
-{
-	console.log("setup");
-	num1 = Equation.ReRoll(13);
-	num2 = Equation.ReRoll(13);
-	currentOp = operator[Equation.ReRoll(4)];
-	Equation.setLocal();
-	Equation.create();
+	num1 = Equation.prototype.ReRoll(13);
+	num2 = Equation.prototype.ReRoll(13);
+	currentOp = operator[Equation.prototype.ReRoll(4)];
+	Equation.prototype.setLocal();
+	Equation.prototype.create();
 }
 
 //STOLEN! From Assignment #1 (don't sue)
-Equation.ReRoll = function(max){
+Equation.prototype.ReRoll = function(max){
 	return Math.floor(Math.random() * Math.floor(max));
 }
 
-Equation.correct = function()
+//Correct Method (INCREMENT SCORE + ADD A SKIP + CLEAR INPUT)
+Equation.prototype.correct = function()
 {
-	console.log("correct");
 	guessEle.value = "";
 	score += 1;
 	if(skipsAllowed < 3)
@@ -122,30 +136,39 @@ Equation.correct = function()
 	}
 	else
 	{
-		//NOT ADDIN' MORE SKIPS
+		//NOT ADDIN' MORE SKIPS THAN 3
 	}
 	scoreEle.textContent = score;
-	Equation.setup();	
+	Equation.prototype.setup();	
 }
-Equation.incorrect = function()
+
+//Incorrect Method (DECREMENT SCORE + CLEAR INPUT)
+Equation.prototype.incorrect = function()
 {
-	console.log("incorrect");
 	guessEle.value = "";
 	score -= 1;
 	scoreEle.textContent = score;
-	Equation.setup();
+	Equation.prototype.setup();
 }
-Equation.addition = function(num1, num2)
+
+//Addition Method
+Equation.prototype.addition = function(num1, num2)
 {
 	return num1 + num2;
 } 
-Equation.subtraction = function(num1, num2)
+
+//Subtraction Method
+Equation.prototype.subtraction = function(num1, num2)
 {
 	return num1 - num2;
 }
-Equation.division = function(num1, num2)
+
+//Division Method
+Equation.prototype.division = function(num1, num2)
 {
-	console.log(num1 + "    " + num2);
+	//If the numbers don't divide evenly
+	//Increment the lower until they do
+	//Easier to do for kids
 	if((num1 / num2) % 1 == 0)
 	{
 		return true;
@@ -155,11 +178,15 @@ Equation.division = function(num1, num2)
 		return false;
 	}
 }
-Equation.multiplication = function(num1, num2)
+
+//Multiplication Method
+Equation.prototype.multiplication = function(num1, num2)
 {
 	return num1 * num2;
 }
-Equation.setLocal = function()
+
+//Set Local Storage
+Equation.prototype.setLocal = function()
 {
 	localStorage.setItem('num1', num1);
 	localStorage.setItem('num2', num2);
@@ -167,9 +194,10 @@ Equation.setLocal = function()
 	localStorage.setItem('Score', score);
 	localStorage.setItem('skipsAllowed', skipsAllowed);
 }
-Equation.loadLocal = function()
+
+//Retrieve and populate variables from LS
+Equation.prototype.loadLocal = function()
 {
-	console.log("local loaded");
 	score = Number(localStorage.getItem('Score'));
 	num1 = Number(localStorage.getItem('num1'));
 	num2 = Number(localStorage.getItem('num2'));
@@ -179,4 +207,17 @@ Equation.loadLocal = function()
 	scoreEle.textContent = score;
 }
 
-Equation.call();
+//Reset Local storage + score and skips
+Equation.prototype.reset = function()
+{
+	console.clear();
+	localStorage.clear();
+	score = 0;
+	skipsAllowed = 3;
+	skipEle.value = "Skip(" + skipsAllowed + ")";
+	scoreEle.textContent = score;
+	Equation.prototype.setup();
+}
+
+//Call the app
+Equation();
