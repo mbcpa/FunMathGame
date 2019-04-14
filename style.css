@@ -1,6 +1,14 @@
 html
 {
 	text-align: center;
+	background-image: url("images/background.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;	
+}
+
+header
+{
+	border-style: solid;
 	background-color: lightblue;
 }
 
@@ -17,7 +25,39 @@ html
 	padding: 20px 20px;
 }
 
-.userzone
+.extrabuttons
 {
+	padding: 10px;
+	margin: auto;
+	width: 10%;	
+}
 
+.scoredisplay
+{
+	font-size: 20px;
+}
+
+.messagezone
+{
+	width: 400px;
+	height: 200px;
+	border-style: solid;
+	border-color: black;
+	margin: auto;
+	background-color: lightblue;
+}
+
+.submit
+{
+	color: green;
+}
+
+.skip
+{
+	color: blue;
+}
+
+.reset
+{
+	color: red;
 }

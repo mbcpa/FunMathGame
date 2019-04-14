@@ -108,7 +108,20 @@ Equation.prototype.create = function()
 	}
 	question = num1 + " " + currentOp + " " + num2 + " = [?]";
 	questionEle.textContent = question;
+	if(score >= 1)
+	{
+		scoreEle.style.color = "green";
+	}
+	else if(score < 0)
+	{
+		scoreEle.style.color = "red";
+	}
+	else
+	{
+		scoreEle.style.color = "black";
+	}
 }
+
 
 //Setup Method (QUESTION VARIABLES + LOCALSTORAGE)
 Equation.prototype.setup = function()
@@ -140,6 +153,7 @@ Equation.prototype.correct = function(answer)
 	}
 	scoreEle.textContent = score;
 	messageEle.textContent = "Correct! " + num1 + " " + currentOp + " " + num2 + " = " + answer;
+	messageEle.style.color = "green";
 	guessEle.value = "";
 	Equation.prototype.setup();	
 }
@@ -151,6 +165,7 @@ Equation.prototype.incorrect = function(answer)
 	score -= 1;
 	scoreEle.textContent = score;
 	messageEle.textContent = "Incorrect! " + num1 + " " + currentOp + " " + num2 + " = " + answer;
+	messageEle.style.color = "red";
 	Equation.prototype.setup();
 }
 
