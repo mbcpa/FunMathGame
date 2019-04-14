@@ -5,6 +5,7 @@ const scoreEle = document.querySelector(".score");
 const guessEle = document.querySelector(".guess");
 const questionEle = document.querySelector(".question");
 const resetEle = document.querySelector(".reset");
+const messageEle = document.querySelector(".message");
 const operator = ['+', '-', '/', 'x'];
 var currentGame
 var score = 0;
@@ -64,11 +65,11 @@ var Equation = function()
 		}
 		if(answer == guess)
 		{
-			Equation.prototype.correct();
+			Equation.prototype.correct(answer);
 		}
 		else
 		{
-			Equation.prototype.incorrect();
+			Equation.prototype.incorrect(answer);
 		}
 	}
 
@@ -125,9 +126,8 @@ Equation.prototype.ReRoll = function(max){
 }
 
 //Correct Method (INCREMENT SCORE + ADD A SKIP + CLEAR INPUT)
-Equation.prototype.correct = function()
+Equation.prototype.correct = function(answer)
 {
-	guessEle.value = "";
 	score += 1;
 	if(skipsAllowed < 3)
 	{
@@ -139,15 +139,18 @@ Equation.prototype.correct = function()
 		//NOT ADDIN' MORE SKIPS THAN 3
 	}
 	scoreEle.textContent = score;
+	messageEle.textContent = "Correct! " + num1 + " " + currentOp + " " + num2 + " = " + answer;
+	guessEle.value = "";
 	Equation.prototype.setup();	
 }
 
 //Incorrect Method (DECREMENT SCORE + CLEAR INPUT)
-Equation.prototype.incorrect = function()
+Equation.prototype.incorrect = function(answer)
 {
 	guessEle.value = "";
 	score -= 1;
 	scoreEle.textContent = score;
+	messageEle.textContent = "Incorrect! " + num1 + " " + currentOp + " " + num2 + " = " + answer;
 	Equation.prototype.setup();
 }
 
@@ -219,5 +222,11 @@ Equation.prototype.reset = function()
 	Equation.prototype.setup();
 }
 
+//Checks for the enter key to be pushed while focused on the field. (Submits answer instead of pressing button.)
+guessEle.addEventListener('keyup', function onEvent(e) {
+    if (e.keyCode === 13) {
+        submitEle.onclick.call();
+    }
+});
 //Call the app
 Equation();

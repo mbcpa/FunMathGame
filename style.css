@@ -1,0 +1,23 @@
+html
+{
+	text-align: center;
+	background-color: lightblue;
+}
+
+.question
+{
+	font-size: 60px;
+	margin-bottom: 30px;
+	padding-bottom: 20px 20px;
+	border-style: solid;
+}
+
+.questionzone
+{
+	padding: 20px 20px;
+}
+
+.userzone
+{
+
+}
